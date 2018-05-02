@@ -18,12 +18,14 @@ class Q_Learning{
         this.Q       = {};
         this.s       = "000000000";
         this.memoria = "local";
+        
+        this.S=[];
+        this.A=[];
     }
 
 
     convert(opcao,map){
         var cast;
-        // console.log(map);
         if(opcao=="game_for_ia"){
             cast="";
             for(let obj in map){
@@ -81,8 +83,8 @@ class Q_Learning{
                 }
             }
             if(maior>0){
-                this.a=posicao;
-                return this.patternGamerMap[posicao];
+                // this.a=posicao;
+                return posicao;
             }else{
                 let aleatorio = Math.floor((Math.random() * 10));
                 while(true){
@@ -91,8 +93,8 @@ class Q_Learning{
                     }
                     aleatorio = Math.floor((Math.random() * 10));
                 }
-                this.a=aleatorio;
-                return this.patternGamerMap[aleatorio];
+                // this.a=aleatorio;
+                return aleatorio;
             }
         }
         let aleatorio = Math.floor((Math.random() * 10));
@@ -102,16 +104,24 @@ class Q_Learning{
             }
             aleatorio = Math.floor((Math.random() * 10));
         }
-        this.a=aleatorio;
-        return this.patternGamerMap[aleatorio];
+        // this.a=aleatorio;
+        return aleatorio;
+    }
+
+
+    setS(value){
+        this.S.push(value);
+        this.s=value;
+    }
+    setA(value){
+        this.A.push(value);
+        this.a=value;
     }
 
 
     play(map){
-        // console.log(this.Q);
-        // console.log(this.s);
 
-        var aleatorio = Math.floor((Math.random() * 10));
+        var aleatorio = 4;
         while(true){
             if(map[this.patternGamerMap[aleatorio]]==-1){
                 break;
@@ -121,29 +131,15 @@ class Q_Learning{
         }
 
         if(this.s=="000000000"){
-            this.a=aleatorio;
-            this.s=this.convert("game_for_ia",map);
-            console.log(this.patternGamerMap[aleatorio]);
+            this.setA(aleatorio);
+            this.setS(this.convert("game_for_ia",map));
+            // console.log(this.patternGamerMap[aleatorio]);
             return this.patternGamerMap[aleatorio];
         }else{
-            this.s=this.convert("game_for_ia",map);
-            // console.log(this.s);
-            // if(aleatorio<=2){
-            //     aleatorio = Math.floor((Math.random() * 10));
-            //     while(true){
-            //         if(map[this.patternGamerMap[aleatorio]]==-1){
-            //             break;
-            //         }
-            //         aleatorio = Math.floor((Math.random() * 10));
-            //     }
-            //     this.a=aleatorio;
-            //     console.log(this.patternGamerMap[aleatorio]);
-            //     return this.patternGamerMap[aleatorio];
-            // }else{
+                this.setS(this.convert("game_for_ia",map));
                 var retorno = this.findMemory(map);
-                console.log(retorno);
-                return retorno;
-            // }
+                this.setA(retorno);
+                return this.patternGamerMap[retorno];
         }
     }
 
@@ -162,22 +158,44 @@ class Q_Learning{
         
         var recompensa = 0;
         
-        if(ocorrido=="win")
+        if(ocorrido=="win"){
+            this.resultbBackPropagation();
             recompensa=100;
-        if(ocorrido=="empate")
+        }
+        if(ocorrido=="empate"){
             recompensa=10;
-        if(ocorrido=="empate-simples")
+            this.S=[];
+            this.A=[];
+        }
+        if(ocorrido=="empate-simples"){
             recompensa=0;
-        if(ocorrido=="loser")   
+        }
+        if(ocorrido=="loser"){
             recompensa=-50;
-        
-        this.Q[this.s]          = this.Q[this.s]==undefined ? {} : this.Q[this.s];
-        var Qsxa                = this.Q[this.s][this.a]==undefined ? 0 : this.Q[this.s][this.a];
-        var Qs                  = this.Q[this.s]==undefined ? [0,0] : this.Q[this.s];
-        this.Q[this.s][this.a]  = Qsxa+this.aprendizado*(recompensa+ this.desconto*this.maxJson(Qs)-Qsxa);
-        console.log(this.Q);
+            this.S=[];
+            this.A=[];   
+        }
+     
+        this.resultDirect(recompensa,this.s,this.a);
 
     }
 
+    resultDirect(recompensa,s,a){
+        this.Q[s]     = this.Q[s]==undefined ? {} : this.Q[s];
+        var Qsxa      = this.Q[s][a]==undefined ? 0 : this.Q[s][a];
+        var Qs        = this.Q[s]==undefined ? [0,0] : this.Q[s];
+        this.Q[s][a]  = Qsxa+this.aprendizado*(recompensa+ this.desconto*this.maxJson(Qs)-Qsxa);
+        console.log(this.Q);
+    }
+
+    resultbBackPropagation(){
+        var recompensa=15;
+        while(this.S!=0){
+            this.resultDirect(recompensa,this.S[this.S.length-1],this.A[this.A.length-1]);
+            recompensa-=3;
+            this.S.pop();
+            this.A.pop();
+        }
+    }
 
 }
