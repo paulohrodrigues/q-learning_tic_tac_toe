@@ -1,0 +1,72 @@
+<style>
+  td{
+    width: 150px;
+    height: 150px;
+    font-size: 120px;
+    text-align: center;
+  }
+</style>
+<body id="bodyId">
+  <br>
+  <center>
+    <table border="1">
+      <tr>
+        <td id="tb11"></td>
+        <td id="tb12"></td>
+        <td id="tb13"></td>
+      </tr>
+      <tr>
+        <td id="tb21"></td>
+        <td id="tb22"></td>
+        <td id="tb23"></td>
+      </tr>
+      <tr>
+        <td id="tb31"></td>
+        <td id="tb32"></td>
+        <td id="tb33"></td>
+      </tr>
+    </table>
+    <div id="clear">
+      <button id="play">Play</button>
+      <button id="ia">IA</button>
+    </div>
+
+    <button id="parar">Parar</button>
+    <button id="lembrar">Lembrar</button>
+    <button id="guardar">Guardar Conhecimento</button>
+
+  <center>
+
+</body>
+
+<script src="/socket.io/socket.io.js"></script>
+<script src="/jquery"></script>
+<script src="/jogo"></script>
+<script src="/q-learning"></script>
+<script>
+  $(function () {
+    var socket=io();
+  
+    var jogo = new Jogo(socket);
+    document.getElementById("play").addEventListener("click",()=>{
+      jogo.play();
+    });
+    document.getElementById("ia").addEventListener("click",()=>{
+      jogo.play(true);
+    });
+
+    document.getElementById("parar").addEventListener("click",()=>{
+      jogo.q_Learning=null;
+      jogo.console=true;
+    });
+
+    document.getElementById("lembrar").addEventListener("click",()=>{
+      jogo.lembrar();
+    });
+
+    document.getElementById("guardar").addEventListener("click",()=>{
+      jogo.guardarLembrancas();
+    });
+
+  });
+</script>
