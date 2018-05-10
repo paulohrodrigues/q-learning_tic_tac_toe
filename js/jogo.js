@@ -12,6 +12,8 @@ class Jogo {
             tb32:-1,
             tb33:-1
         }
+        this.vitorias=0;
+        document.getElementById("vitorias").innerHTML=this.vitorias;
         this.console=true;
         this.idGame=-1;
         this.status=false;
@@ -213,6 +215,8 @@ class Jogo {
             if(this.checkEndGame(id)==true){
                 if(this.console===true)
                     alert("Você Venceu!");
+                    this.vitorias++;
+                    document.getElementById("vitorias").innerHTML=this.vitorias;
                 if(this.q_Learning!=null){
                     this.q_Learning.result("win");
                 }

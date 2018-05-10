@@ -1,7 +1,7 @@
-var app = require('express')();
-var http = require('http').Server(app);
-var io = require('socket.io')(http);
-var port = process.env.PORT || 3000;
+var app   = require('express')();
+var http  = require('http').Server(app);
+var io    = require('socket.io')(http);
+var port  = process.env.PORT || 3000;
 
 var i=0;
 var valid = ["init","res","game","game_over","empate"];
